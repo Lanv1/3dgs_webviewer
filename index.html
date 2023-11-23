@@ -3,12 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style.css">
     <title>3dgs webviewer</title>
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
-    <input type="file" id="input"/>
+
+    <div class="load_wrapper">
+      <div class="load_row">
+        <label for="input_file"> local .splat or .ply file ?</label>
+        <input type="file" id="input_file"/>
+      </div>
+
+      <div class="load_row">  
+        <label for="input_url"> .splat or .ply url ?</label>
+        <input type="url" id="input_url"/>
+        <button type="button" id="submit_url">Load from url</button>
+      </div>
+      
+
+    </div>
 
   </body>
 </html>

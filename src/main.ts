@@ -1,35 +1,81 @@
 import * as SPLAT from "gsplat";
 
 const scene = new SPLAT.Scene();
-const camera = new SPLAT.Camera();
 const renderer = new SPLAT.WebGLRenderer();
+const camera = new SPLAT.Camera();
 const controls = new SPLAT.OrbitControls(camera, renderer.domElement);
 
-const inputElement = document.getElementById("input");
+const inputFileElem = document.getElementById("input_file");
+const inputUrlElem = document.getElementById("input_url");
+const submitUrlElem = document.getElementById("submit_url");
+
+
+function loadFromFile(file : File) : void {
+    const ext = file.name.slice(-5);  
+    if(ext.slice(2) == "ply") {
+        SPLAT.PLYLoader.LoadFromFileAsync(file, scene, () => {});
+        console.log(".ply file loaded");
+        
+    } else if(ext == "splat") {
+        SPLAT.Loader.LoadFromFileAsync(file, scene, () => {});
+        console.log(".splat file loaded");
+    
+    } else {
+        console.log("input file is neither has .ply or .splat extension.")
+        
+    }  
+}
+
+function loadFromUrl(url : string) : void {
+    const ext = url.slice(-5);  
+    if(ext.slice(2) == "ply") {
+        SPLAT.PLYLoader.LoadAsync(url, scene, () => {});
+        console.log(".ply file loaded");
+        
+    } else if(ext == "splat") {
+        SPLAT.Loader.LoadAsync(url, scene, () => {});
+        console.log(".splat file loaded");
+    
+    } else {
+        console.log("input file is neither has .ply or .splat extension.")
+    }  
+}
 
 async function main() {
-    // const url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/bonsai-7k.splat";
-    // const url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/kitchen/kitchen-7k.splat";
-    // await SPLAT.Loader.LoadAsync(url, scene, () => {});
+    // const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/bonsai-7k.splat";
+    const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/kitchen/kitchen-7k.splat";
+    await SPLAT.Loader.LoadAsync(base_file_url, scene, () => {});
 
-    inputElement?.addEventListener("change", handleFiles, false);
+    inputFileElem?.addEventListener("change", handleFiles, false);
+    // inputUrlElem?.addEventListener("submit", handleUrl, false);
+    submitUrlElem?.addEventListener("click", handleUrl, false);
     
-    function handleFiles(this: any) {
-        const file = this.files[0]; /* now you can work with the file list */
+    function handleFiles(event: Event) {
+        const input = event.target as HTMLInputElement;
 
-        console.log("file loaded");
-        SPLAT.Loader.LoadFromFileAsync(file, scene, () => {});
-
-        const frame = () => {
-            controls.update();
-            renderer.render(scene, camera);
-    
-            requestAnimationFrame(frame);
-        };
-    
-        requestAnimationFrame(frame);
+        if(input.files && input.files.length) {
+            const file = input.files[0];
+            loadFromFile(file);
+        }
     }
 
+    function handleUrl() {
+        console.log("submitted");
+        const url = (inputUrlElem as HTMLInputElement)?.value as string;
+        loadFromUrl(url);
+
+        (inputUrlElem as HTMLInputElement).value = "";
+    }
+
+    const frame = () => {
+        controls.update();
+        renderer.render(scene, camera);
+ 
+        requestAnimationFrame(frame);
+    };
+
+
+    requestAnimationFrame(frame);
 }
 
 main(); 
