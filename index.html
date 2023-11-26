@@ -7,23 +7,26 @@
     <title>3dgs webviewer</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
     <script type="module" src="/src/main.ts"></script>
 
     <div class="load_wrapper">
       <div class="load_row">
-        <label for="input_file"> local .splat or .ply file ?</label>
+        <label for="input_file" id="label_input_file"> load local .splat or .ply file</label>
         <input type="file" id="input_file"/>
       </div>
 
       <div class="load_row">  
-        <label for="input_url"> .splat or .ply url ?</label>
-        <input type="url" id="input_url"/>
+        <input type="url" id="input_url" placeholder="url of a .ply or .splat file"/>
         <button type="button" id="submit_url">Load from url</button>
       </div>
-      
-
     </div>
 
+    <div class="loading_bar" id="loading_bar">
+      <label> Loading scene </label>
+      <progress value="0" max="100" id="progress_bar"></progress>
+    </div>
+
+  </div>
   </body>
 </html>

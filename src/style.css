@@ -59,3 +59,36 @@ div.load_wrapper {
   margin-left: 1%;
   padding: 1%;
 }
+
+input#input_file {
+  opacity: 0;
+  width: 0;
+}
+
+label#label_input_file {
+  background-color: buttonface;
+  padding-block: 1px;
+  padding-inline: 6px;
+  border-width: 2px;
+  border-radius: 3px;
+}
+
+
+label#label_input_file:hover {
+  -moz-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+}
+
+div.loading_bar {
+  display: flex;
+  position: fixed;
+  flex-direction: column;
+
+  left: 50%;
+  z-index: 1;
+}
+
+
+
+

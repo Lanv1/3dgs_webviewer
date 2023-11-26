@@ -9,45 +9,68 @@ const inputFileElem = document.getElementById("input_file");
 const inputUrlElem = document.getElementById("input_url");
 const submitUrlElem = document.getElementById("submit_url");
 
+let progressElem = document.getElementById("progress_bar");
+let loadingElem = document.getElementById("loading_bar");
+
+// document.getElementById("input_file").style.opacity = '0';
+
+function updateProgress(progress : number) : void {
+    if(progress <= 0.1)
+        (loadingElem as HTMLElement).style.opacity = "1";
+
+    (progressElem as HTMLProgressElement).value = 100 * progress;
+}
 
 function loadFromFile(file : File) : void {
-    const ext = file.name.slice(-5);  
+    const ext = file.name.slice(-5);
+    let promise : any;
+
     if(ext.slice(2) == "ply") {
-        SPLAT.PLYLoader.LoadFromFileAsync(file, scene, () => {});
+        promise = SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress);
         console.log(".ply file loaded");
         
     } else if(ext == "splat") {
-        SPLAT.Loader.LoadFromFileAsync(file, scene, () => {});
+        promise = SPLAT.Loader.LoadFromFileAsync(file, scene, updateProgress);
         console.log(".splat file loaded");
     
     } else {
         console.log("input file is neither has .ply or .splat extension.")
         
-    }  
+    }
+    
+    if(promise) {
+        promise.then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
+    }
+
 }
 
 function loadFromUrl(url : string) : void {
-    const ext = url.slice(-5);  
+    const ext = url.slice(-5); 
+    let promise : any;
+
     if(ext.slice(2) == "ply") {
-        SPLAT.PLYLoader.LoadAsync(url, scene, () => {});
+        promise = SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress);
         console.log(".ply file loaded");
         
     } else if(ext == "splat") {
-        SPLAT.Loader.LoadAsync(url, scene, () => {});
+        promise = SPLAT.Loader.LoadAsync(url, scene, updateProgress);
         console.log(".splat file loaded");
     
     } else {
         console.log("input file is neither has .ply or .splat extension.")
     }  
+
+    if(promise) {
+        promise.then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
+    }
 }
 
 async function main() {
-    // const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/bonsai-7k.splat";
     const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/kitchen/kitchen-7k.splat";
-    await SPLAT.Loader.LoadAsync(base_file_url, scene, () => {});
+    await SPLAT.Loader.LoadAsync(base_file_url, scene, updateProgress)
+    .then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
 
     inputFileElem?.addEventListener("change", handleFiles, false);
-    // inputUrlElem?.addEventListener("submit", handleUrl, false);
     submitUrlElem?.addEventListener("click", handleUrl, false);
     
     function handleFiles(event: Event) {
