@@ -12,8 +12,6 @@ const submitUrlElem = document.getElementById("submit_url");
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
 
-// document.getElementById("input_file").style.opacity = '0';
-
 function updateProgress(progress : number) : void {
     if(progress <= 0.1)
         (loadingElem as HTMLElement).style.opacity = "1";
@@ -21,48 +19,38 @@ function updateProgress(progress : number) : void {
     (progressElem as HTMLProgressElement).value = 100 * progress;
 }
 
-function loadFromFile(file : File) : void {
-    const ext = file.name.slice(-5);
-    let promise : any;
-
-    if(ext.slice(2) == "ply") {
-        promise = SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress);
-        console.log(".ply file loaded");
-        
-    } else if(ext == "splat") {
-        promise = SPLAT.Loader.LoadFromFileAsync(file, scene, updateProgress);
-        console.log(".splat file loaded");
-    
-    } else {
-        console.log("input file is neither has .ply or .splat extension.")
-        
-    }
-    
-    if(promise) {
-        promise.then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
-    }
-
+function hideProgress() : void {
+    (loadingElem as HTMLElement).style.opacity = "0";
 }
 
-function loadFromUrl(url : string) : void {
-    const ext = url.slice(-5); 
-    let promise : any;
+async function loadFromFile(file : File) : Promise<void> {
 
-    if(ext.slice(2) == "ply") {
-        promise = SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress);
+    if(file.name.endsWith(".ply")) {
         console.log(".ply file loaded");
+        return await SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress);
         
-    } else if(ext == "splat") {
-        promise = SPLAT.Loader.LoadAsync(url, scene, updateProgress);
+    } else if(file.name.endsWith(".splat")) {
         console.log(".splat file loaded");
+        return await SPLAT.Loader.LoadFromFileAsync(file, scene, updateProgress);
+    
+    } else {
+        console.log("input file is neither has .ply or .splat extension.")   
+    }
+}
+
+async function loadFromUrl(url : string) : Promise<void> {
+
+    if(url.endsWith(".ply")) {
+        console.log(".ply file loaded");
+        return await SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress);
+        
+    } else if(url.endsWith(".splat")) {
+        console.log(".splat file loaded");
+        return await SPLAT.Loader.LoadAsync(url, scene, updateProgress);
     
     } else {
         console.log("input file is neither has .ply or .splat extension.")
     }  
-
-    if(promise) {
-        promise.then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
-    }
 }
 
 async function main() {
@@ -70,25 +58,20 @@ async function main() {
     await SPLAT.Loader.LoadAsync(base_file_url, scene, updateProgress)
     .then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
 
-    inputFileElem?.addEventListener("change", handleFiles, false);
-    submitUrlElem?.addEventListener("click", handleUrl, false);
-    
-    function handleFiles(event: Event) {
-        const input = event.target as HTMLInputElement;
+    submitUrlElem?.addEventListener("click", () => {
+        const url = (inputUrlElem as HTMLInputElement)?.value as string;
+        loadFromUrl(url).then(hideProgress);
+        (inputUrlElem as HTMLInputElement).value = "";
+    }, false);
 
+    inputFileElem?.addEventListener("change", (event : Event) => {
+        const input = event.target as HTMLInputElement;
         if(input.files && input.files.length) {
             const file = input.files[0];
-            loadFromFile(file);
+            loadFromFile(file).then(hideProgress);
         }
-    }
-
-    function handleUrl() {
-        console.log("submitted");
-        const url = (inputUrlElem as HTMLInputElement)?.value as string;
-        loadFromUrl(url);
-
-        (inputUrlElem as HTMLInputElement).value = "";
-    }
+    }, false);
+    
 
     const frame = () => {
         controls.update();
