@@ -89,6 +89,16 @@ div.loading_bar {
   z-index: 1;
 }
 
+div.info_tab {
+  display: flex;
+  position: fixed;
+  left: 90%;
+  top: 10%;
+  color: red;
+  background-color: rgb(62, 85, 85, 0.884);
+  padding: 5px;
+}
+
 
 
 

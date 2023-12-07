@@ -11,6 +11,7 @@ const submitUrlElem = document.getElementById("submit_url");
 
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
+let infoElem = document.getElementById("info_tab");
 
 function updateProgress(progress : number) : void {
     if(progress <= 0.1)
@@ -27,7 +28,7 @@ async function loadFromFile(file : File) : Promise<void> {
 
     if(file.name.endsWith(".ply")) {
         console.log(".ply file loaded");
-        return await SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress);
+        return await SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress, undefined, true);
         
     } else if(file.name.endsWith(".splat")) {
         console.log(".splat file loaded");
@@ -71,13 +72,35 @@ async function main() {
             loadFromFile(file).then(hideProgress);
         }
     }, false);
-    
 
-    const frame = () => {
+    let then = 0;
+    let nbFrames = 0;
+    let avgTime = 0;
+
+    const frame = (now: any) => {
+        
+        
         controls.update();
+        let before_draw = performance.now();
         renderer.render(scene, camera);
- 
+        let after_draw = performance.now();
+        
+        avgTime += (after_draw - before_draw);
+
+        if(nbFrames % 100 == 0) {
+            now *= 0.001;
+            const dt = now - then;
+            then = now;
+
+            const fps = nbFrames / dt;
+            (infoElem as HTMLElement).textContent = `fps: ${fps.toFixed(1)} | ${(avgTime / nbFrames).toFixed(3)} ms`;
+
+            avgTime = 0;
+            nbFrames = 0;
+        }
+
         requestAnimationFrame(frame);
+        nbFrames ++;
     };
 
 
