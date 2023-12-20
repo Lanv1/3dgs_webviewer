@@ -24,8 +24,6 @@ let canvasElem = document.querySelector("canvas");
 let selectedCam = 0;
 let cameras : any;
 
-let settingsHidden = false;
-
 const useShs = true; // use shs to compute color or not
 
 function updateProgress(progress : number) : void {
