@@ -100,7 +100,7 @@ async function main() {
                 camera = SPLAT.Camera.fromData(cameras[selectedCam]);
                 controls.setCamera(camera);
             };
-            reader.onprogress = (e) => {
+            reader.onprogress = () => {
             };
             reader.readAsText(file);
             new Promise<void>((resolve) => {
@@ -113,12 +113,12 @@ async function main() {
         }
     });
 
-    exportBtnElem?.addEventListener("click", (event: Event) => {
+    exportBtnElem?.addEventListener("click", () => {
         console.log("export clicked");
         camera.dumpSettings(renderer.domElement.width, renderer.domElement.height);
     });
     
-    camSelectorBtnElem?.addEventListener("click", (event: Event) => {
+    camSelectorBtnElem?.addEventListener("click", () => {
         console.log("next cam clicked");
         const nbCam = cameras.length;
         selectedCam = (selectedCam + 1) % nbCam;
