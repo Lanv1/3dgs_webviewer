@@ -1,9 +1,7 @@
 // vite.config.js
-export default {
-  // config options
-  base : '/3dgs_webviewer/',
+import { defineConfig } from 'vite'
 
-  build: {
-    outDir: 'public'
-  }
-}
+// https://vitejs.dev/config/
+export default defineConfig({
+  base : '/3dgs_webviewer/',
+})
