@@ -53,16 +53,39 @@ h1 {
   }
 }
 
-div.settings_wrapper {
+i{
+  display: inline-block;
+  height: 1rem;
+  width: 1rem;
+  padding: 20px;
+}
+
+.panel {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   position: fixed;
   z-index: 1;
   top: 5vh;
+
+  -webkit-transition: transform 1s ease;
+  transition: transform 1s ease;
 }
 
-div.load_wrapper {
+.settings_wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel.slide {
+  transform: translate3d(-85%, 0, 0);
+  transition: transform 1s ease;
+  -webkit-transform: translate3d(-85%, 0, 0);
+  -webkit-transition: transform 1s ease;
+
+}
+
+.load_wrapper {
   display: flex;
   flex-direction: column;
   background-color: rgb(62, 85, 85, 0.884);
@@ -76,7 +99,7 @@ div.load_wrapper {
   padding: 1%;
 }
 
-div.load_row {
+.load_row {
   display: flex;
   padding: 5px;
   align-items: center;
@@ -107,7 +130,7 @@ input#selectedCam{
   width: 40px;
 }
 
-div.loading_bar {
+.loading_bar {
   display: flex;
   position: fixed;
   flex-direction: column;
@@ -116,7 +139,7 @@ div.loading_bar {
   z-index: 1;
 }
 
-div.info_tab {
+.info_tab {
   display: flex;
   position: fixed;
   left: 90%;

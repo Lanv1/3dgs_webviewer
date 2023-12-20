@@ -11,6 +11,8 @@ const submitUrlElem = document.getElementById("submit_url");
 const camFileElem = document.getElementById("input_cam");
 const exportBtnElem = document.getElementById("exportBtn");
 const camSelectorBtnElem = document.getElementById("camSelector");
+const hidePannelBtn = document.querySelector("i");
+const panelElem = document.querySelector(".panel");
 
 
 let progressElem = document.getElementById("progress_bar");
@@ -21,6 +23,8 @@ let canvasElem = document.querySelector("canvas");
 
 let selectedCam = 0;
 let cameras : any;
+
+let settingsHidden = false;
 
 const useShs = true; // use shs to compute color or not
 
@@ -70,8 +74,8 @@ async function loadFromUrl(url : string) : Promise<void> {
 }
 
 async function main() {
-    const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/kitchen/kitchen-7k.splat";
-    await SPLAT.Loader.LoadAsync(base_file_url, scene, updateProgress)
+    const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/point_cloud/iteration_7000/point_cloud.ply";
+    await SPLAT.PLYLoader.LoadAsync(base_file_url, scene, updateProgress)
     .then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
 
     submitUrlElem?.addEventListener("click", () => {
@@ -137,6 +141,16 @@ async function main() {
             camera = SPLAT.Camera.fromData(cameras[selectedCam]);
             controls.setCamera(camera);        
         }
+    });
+
+    hidePannelBtn?.addEventListener("click", () => {
+        panelElem?.classList.toggle("slide");
+        console.log(panelElem);
+        console.log("toggle button clicked");
+
+        hidePannelBtn?.classList.toggle("fa-less-than");
+        hidePannelBtn?.classList.toggle("fa-greater-than");
+        
     });
 
     let then = 0;
