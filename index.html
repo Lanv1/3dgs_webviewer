@@ -11,37 +11,30 @@
     <div id="app">
     <script type="module" src="/src/main.ts"></script>
     
-    <div class="panel slide">
-
-      <div class="settings_wrapper">
-        <div class="load_wrapper">
-          <div class="load_row">
-            <label for="input_file" id="label_input_file" class="label_input_file"> load local .splat or .ply file</label>
-            <input type="file" id="input_file" class="input_file"/>
+    <div style="display: inline-block;">
+      <div class="panel slide">
+  
+        <div class="scene_card" id="bicycle">
+          <div class="minia_wrap">
+            <div class="image">
+              <img src="ressources/bicycle.png">
+            </div>
           </div>
+          <label class="desc">Bicycle</label>
+        </div>
     
-          <div class="load_row">  
-            <input type="url" id="input_url" placeholder="url of a .ply or .splat file"/>
-            <button type="button" id="submit_url">Load from url</button>
+        <div class="scene_card">
+          <div class="minia_wrap">
+            <div class="image">
+              <img src="ressources/bicycle.png">
+            </div>
           </div>
+          <label class="desc">Bicycle</label>
         </div>
-  
-        <div class="load_wrapper">
-          <div class="load_row">
-            <label for="input_cam" id="label_input_cam" class="label_input_file"> load camera.json file</label>
-            <input type="file" id="input_cam" class="input_file"/>
-            <button type="button" id="exportBtn">export camera</button>
-          </div>
-  
-          <div class="load_row">
-            <button type="button" id="camSelector">next camera</button>
-            <input type="text" id="selectedCam" value="0" maxlength="3"></input>
-  
-          </div>
-        </div>
-      </div>
 
-      <i class="fa-solid fa-greater-than" style="color: #fcfdfe;"></i>
+
+        <i class="fa-solid fa-greater-than" style="color: #fcfdfe;"></i>
+      </div>
 
     </div>
     

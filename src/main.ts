@@ -13,7 +13,7 @@ const exportBtnElem = document.getElementById("exportBtn");
 const camSelectorBtnElem = document.getElementById("camSelector");
 const hidePannelBtn = document.querySelector("i");
 const panelElem = document.querySelector(".panel");
-
+const bicycleScene = document.querySelector("#bicycle");
 
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
@@ -23,8 +23,9 @@ let canvasElem = document.querySelector("canvas");
 
 let selectedCam = 0;
 let cameras : any;
-
-let settingsHidden = false;
+let remainingTime = false;
+let FPSrIC : number;
+let FPS : number;
 
 const useShs = true; // use shs to compute color or not
 
@@ -62,7 +63,7 @@ async function loadFromUrl(url : string) : Promise<void> {
 
     if(url.endsWith(".ply")) {
         console.log(".ply file loaded from url");
-        return await SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress, undefined, useShs);
+        return await SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress, undefined, useShs, true);
         
     } else if(url.endsWith(".splat")) {
         console.log(".splat file loaded from url");
@@ -73,10 +74,20 @@ async function loadFromUrl(url : string) : Promise<void> {
     }  
 }
 
+function fpsComputeRic(d : IdleDeadline) {
+    // Calculate the actual time the frame took
+	// and the according FPS
+	const goal = 1000 / 60;
+	const elapsed = goal - d.timeRemaining();
+	FPSrIC = goal * 60 / elapsed;
+    remainingTime = true;
+}
+
+
 async function main() {
-    const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/point_cloud/iteration_7000/point_cloud.ply";
-    await SPLAT.PLYLoader.LoadAsync(base_file_url, scene, updateProgress)
-    .then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
+    // const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/point_cloud/iteration_7000/point_cloud.ply";
+    // await SPLAT.PLYLoader.LoadAsync(base_file_url, scene, updateProgress)
+    // .then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
 
     submitUrlElem?.addEventListener("click", () => {
         const url = (inputUrlElem as HTMLInputElement)?.value as string;
@@ -148,9 +159,15 @@ async function main() {
         console.log(panelElem);
         console.log("toggle button clicked");
 
-        hidePannelBtn?.classList.toggle("fa-less-than");
         hidePannelBtn?.classList.toggle("fa-greater-than");
+        hidePannelBtn?.classList.toggle("fa-less-than");
         
+    });
+
+
+    bicycleScene?.addEventListener("click", () => {
+        const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
+        loadFromUrl(url).then(endProgress);
     });
 
     let then = 0;
@@ -158,7 +175,6 @@ async function main() {
     let avgTime = 0;
 
     const frame = (now: any) => {
-        
         controls.update();
 
         let before_draw = performance.now();
@@ -172,13 +188,21 @@ async function main() {
             const dt = now - then;
             then = now;
 
-            const fps = nbFrames / dt;
-            (infoElem as HTMLElement).textContent = `fps: ${fps.toFixed(1)} | ${(avgTime / nbFrames).toFixed(3)} ms`;
-
+            FPS = nbFrames / dt;
+            
             avgTime = 0;
             nbFrames = 0;
         }
 
+        if(remainingTime && nbFrames % 100 == 0) {
+            (infoElem as HTMLElement).textContent = `fps: ${FPSrIC.toFixed(1)}`;
+        } else {
+            (infoElem as HTMLElement).textContent = `fps: ${FPS.toFixed(1)}`;
+        }
+
+        remainingTime = false;
+
+        requestIdleCallback(fpsComputeRic)
         requestAnimationFrame(frame);
         nbFrames ++;
     };

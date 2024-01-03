@@ -15,6 +15,7 @@
 
 body {
   margin: 0;
+  padding: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
@@ -31,6 +32,7 @@ h1 {
   margin: 0 auto;
   /* padding: 2rem; */
   text-align: center;
+  display: flex;
 }
 
 
@@ -61,9 +63,9 @@ i{
 }
 
 .panel {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
-
+  align-items: flex-start;
   position: fixed;
   z-index: 1;
   top: 5vh;
@@ -72,17 +74,37 @@ i{
   transition: transform 1s ease;
 }
 
+.scene_card {
+  display: inline-flex;
+  flex-direction: column;
+  z-index: 1;
+  background-color: #747bff;
+  align-items: center;
+  width: fit-content;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+}
+
+.image img {
+  max-width: 300px;
+  padding: 5px;
+}
+
+.image:hover {
+  opacity: 0.8;
+}
+
 .settings_wrapper {
   display: flex;
   flex-direction: column;
 }
 
 .panel.slide {
-  transform: translate3d(-85%, 0, 0);
+  transform: translate3d(-90%, 0, 0);
   transition: transform 1s ease;
-  -webkit-transform: translate3d(-85%, 0, 0);
+  -webkit-transform: translate3d(-90%, 0, 0);
   -webkit-transition: transform 1s ease;
-
 }
 
 .load_wrapper {
