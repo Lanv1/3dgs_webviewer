@@ -13,7 +13,7 @@ const exportBtnElem = document.getElementById("exportBtn");
 const camSelectorBtnElem = document.getElementById("camSelector");
 const hidePannelBtn = document.querySelector("i");
 const panelElem = document.querySelector(".panel");
-const bicycleScene = document.querySelector("#bicycle");
+const bicycleSceneLight = document.querySelector("#light_bicycle");
 
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
@@ -165,8 +165,9 @@ async function main() {
     });
 
 
-    bicycleScene?.addEventListener("click", () => {
-        const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
+    bicycleSceneLight?.addEventListener("click", () => {
+        // const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
+        const url = "https://raw.githack.com/Lanv1/3dgs_scenes/main/scenes/bicycle/quantized_bicycle.ply";
         loadFromUrl(url).then(endProgress);
     });
 

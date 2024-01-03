@@ -78,7 +78,7 @@ i{
   display: inline-flex;
   flex-direction: column;
   z-index: 1;
-  background-color: #747bff;
+  background-color: rgb(30, 48, 80);
   align-items: center;
   width: fit-content;
   flex-wrap: wrap;
