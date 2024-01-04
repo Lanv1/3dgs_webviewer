@@ -14,9 +14,11 @@ const camSelectorBtnElem = document.getElementById("camSelector");
 const hidePannelBtn = document.querySelector("i");
 const panelElem = document.querySelector(".panel");
 const bicycleSceneLight = document.querySelector("#light_bicycle");
+const bicycleSceneHeavy = document.querySelector("#heavy_bicycle");
 
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
+let loadingDesc = document.getElementById("desc");
 let infoElem = document.getElementById("info_tab");
 let camSelectorLabelElem = document.getElementById("selectedCam");
 let canvasElem = document.querySelector("canvas");
@@ -29,14 +31,16 @@ let FPS : number;
 
 const useShs = true; // use shs to compute color or not
 
-function updateProgress(progress : number) : void {
+function updateProgress(progress : number, loadingDone: boolean = false) : void {
     (progressElem as HTMLProgressElement).value = 100 * progress;
+    if(loadingDone)
+        (loadingDesc as HTMLElement).textContent = "Parsing";
 }
 
 function endProgress() : void {
     (loadingElem as HTMLElement).style.opacity = "0";
     (canvasElem as HTMLElement).style.opacity = "1";
-
+    (loadingDesc as HTMLElement).textContent = "Loading";
 }
 
 async function loadFromFile(file : File) : Promise<void> {
@@ -57,13 +61,13 @@ async function loadFromFile(file : File) : Promise<void> {
     }
 }
 
-async function loadFromUrl(url : string) : Promise<void> {
+async function loadFromUrl(url : string, quantized : boolean = true) : Promise<void> {
     (loadingElem as HTMLElement).style.opacity = "1";
     (canvasElem as HTMLElement).style.opacity = "0.1";
 
     if(url.endsWith(".ply")) {
         console.log(".ply file loaded from url");
-        return await SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress, undefined, useShs, true);
+        return await SPLAT.PLYLoader.LoadAsync(url, scene, updateProgress, undefined, useShs, quantized);
         
     } else if(url.endsWith(".splat")) {
         console.log(".splat file loaded from url");
@@ -166,9 +170,29 @@ async function main() {
 
 
     bicycleSceneLight?.addEventListener("click", () => {
+        panelElem?.classList.toggle("slide");
+        console.log(panelElem);
+        console.log("toggle button clicked");
+
+        hidePannelBtn?.classList.toggle("fa-greater-than");
+        hidePannelBtn?.classList.toggle("fa-less-than");
+        
         // const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
-        const url = "https://raw.githack.com/Lanv1/3dgs_scenes/main/scenes/bicycle/quantized_bicycle.ply";
+        // const url = "https://raw.githack.com/Lanv1/3dgs_scenes/main/scenes/bicycle/quantized_bicycle.ply";
+        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bicycle/quantized_bicycle.ply";
         loadFromUrl(url).then(endProgress);
+    });
+
+    bicycleSceneHeavy?.addEventListener("click", () => {
+        panelElem?.classList.toggle("slide");
+        console.log(panelElem);
+        console.log("toggle button clicked");
+
+        hidePannelBtn?.classList.toggle("fa-greater-than");
+        hidePannelBtn?.classList.toggle("fa-less-than");
+
+        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bicycle/full_bicycle.ply";
+        loadFromUrl(url, false).then(endProgress);
     });
 
     let then = 0;
