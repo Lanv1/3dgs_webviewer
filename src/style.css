@@ -20,6 +20,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  /* overflow: hidden; */
 }
 
 h1 {
@@ -62,17 +63,99 @@ i{
   padding: 20px;
 }
 
-.panel {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: flex-start;
-  position: fixed;
-  z-index: 1;
-  top: 5vh;
-
-  -webkit-transition: transform 1s ease;
-  transition: transform 1s ease;
+.icon_wrap {
+  position: relative;
+  left: 90%;
+  display: contents;
 }
+
+/* phone */
+@media screen and (max-width: 679px){
+  .panel {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    z-index: 1;
+    top: 5vh;
+    flex-wrap: wrap;
+  
+    -webkit-transition: transform 1s ease;
+    transition: transform 1s ease;
+
+
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+
+    /* height: 80vh; */
+    border-radius: 10px;
+  }
+
+  .panel.slide {
+    transform: translate3d(-80%, 0, 0);
+    transition: transform 1s ease;
+    -webkit-transform: translate3d(-80%, 0, 0);
+    -webkit-transition: transform 1s ease;
+  }
+
+  .info_tab {
+    display: flex;
+    position: fixed;
+    left: 80%;
+    top: 10%;
+    color: red;
+    background-color: rgb(62, 85, 85, 0.884);
+    padding: 15px;
+  }
+  
+  .icon_wrap {
+    position: relative;
+    left: 90%;
+  }
+  
+}
+
+/* desktop */
+@media screen and (min-width: 680px){
+  .panel {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: flex-start;
+    position: fixed;
+    z-index: 1;
+    top: 5vh;
+    flex-wrap: wrap;
+  
+    -webkit-transition: transform 1s ease;
+    transition: transform 1s ease;
+  }
+
+  .panel.slide {
+    transform: translate3d(-90%, 0, 0);
+    transition: transform 1s ease;
+    -webkit-transform: translate3d(-90%, 0, 0);
+    -webkit-transition: transform 1s ease;
+  }
+
+  .info_tab {
+    display: flex;
+    position: fixed;
+    left: 90%;
+    top: 10%;
+    color: red;
+    background-color: rgb(62, 85, 85, 0.884);
+    padding: 15px;
+  }
+
+  .icon_wrap {
+    position: relative;
+    left: 90%;
+    display: contents;
+  }
+  
+}
+
+
 
 .scene_card {
   display: inline-flex;
@@ -80,10 +163,15 @@ i{
   z-index: 1;
   background-color: rgb(30, 48, 80);
   align-items: center;
-  width: fit-content;
+  /* width: 49%; */
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
+
+  /* height: 100vh; */
+}
+.minia_wrap {
+  width: fit-content;
 }
 
 .image img {
@@ -159,6 +247,12 @@ input#selectedCam{
 
   left: 50%;
   z-index: 1;
+
+  opacity: 0;
+}
+
+label.desc {
+  color: #ffffff;
 }
 
 .info_tab {
@@ -166,6 +260,7 @@ input#selectedCam{
   position: fixed;
   left: 90%;
   top: 10%;
+  padding:10px;
   color: red;
   background-color: rgb(62, 85, 85, 0.884);
   padding: 5px;

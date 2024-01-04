@@ -13,12 +13,17 @@ const exportBtnElem = document.getElementById("exportBtn");
 const camSelectorBtnElem = document.getElementById("camSelector");
 const hidePannelBtn = document.querySelector("i");
 const panelElem = document.querySelector(".panel");
+
 const bicycleSceneLight = document.querySelector("#light_bicycle");
 const bicycleSceneHeavy = document.querySelector("#heavy_bicycle");
+const bonsaiSceneLight = document.querySelector("#light_bonsai");
+const bonsaiSceneHeavy = document.querySelector("#heavy_bonsai");
+
+let cardWrapperElem = document.querySelector("#card_wrapper");
 
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
-let loadingDesc = document.getElementById("desc");
+let loadingDesc = document.getElementById("loading_desc");
 let infoElem = document.getElementById("info_tab");
 let camSelectorLabelElem = document.getElementById("selectedCam");
 let canvasElem = document.querySelector("canvas");
@@ -192,6 +197,32 @@ async function main() {
         hidePannelBtn?.classList.toggle("fa-less-than");
 
         const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bicycle/full_bicycle.ply";
+        loadFromUrl(url, false).then(endProgress);
+    });
+
+    bonsaiSceneLight?.addEventListener("click", () => {
+        panelElem?.classList.toggle("slide");
+        console.log(panelElem);
+        console.log("toggle button clicked");
+
+        hidePannelBtn?.classList.toggle("fa-greater-than");
+        hidePannelBtn?.classList.toggle("fa-less-than");
+        
+        // const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
+        // const url = "https://raw.githack.com/Lanv1/3dgs_scenes/main/scenes/bicycle/quantized_bicycle.ply";
+        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bonsai/quantized_bonsai.ply";
+        loadFromUrl(url).then(endProgress);
+    });
+
+    bonsaiSceneHeavy?.addEventListener("click", () => {
+        panelElem?.classList.toggle("slide");
+        console.log(panelElem);
+        console.log("toggle button clicked");
+
+        hidePannelBtn?.classList.toggle("fa-greater-than");
+        hidePannelBtn?.classList.toggle("fa-less-than");
+
+        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bonsai/full_bonsai.ply";
         loadFromUrl(url, false).then(endProgress);
     });
 
