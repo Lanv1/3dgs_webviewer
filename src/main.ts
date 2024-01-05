@@ -5,36 +5,145 @@ const renderer = new SPLAT.WebGLRenderer();
 let camera = new SPLAT.Camera();
 const controls = new SPLAT.OrbitControls(camera, renderer.domElement);
 
-const inputFileElem = document.getElementById("input_file");
-const inputUrlElem = document.getElementById("input_url");
-const submitUrlElem = document.getElementById("submit_url");
-const camFileElem = document.getElementById("input_cam");
-const exportBtnElem = document.getElementById("exportBtn");
-const camSelectorBtnElem = document.getElementById("camSelector");
+const hidePannelBtnWrap = document.getElementsByClassName("icon_wrap")[0];
 const hidePannelBtn = document.querySelector("i");
 const panelElem = document.querySelector(".panel");
-
-const bicycleSceneLight = document.querySelector("#light_bicycle");
-const bicycleSceneHeavy = document.querySelector("#heavy_bicycle");
-const bonsaiSceneLight = document.querySelector("#light_bonsai");
-const bonsaiSceneHeavy = document.querySelector("#heavy_bonsai");
-
-let cardWrapperElem = document.querySelector("#card_wrapper");
 
 let progressElem = document.getElementById("progress_bar");
 let loadingElem = document.getElementById("loading_bar");
 let loadingDesc = document.getElementById("loading_desc");
 let infoElem = document.getElementById("info_tab");
-let camSelectorLabelElem = document.getElementById("selectedCam");
 let canvasElem = document.querySelector("canvas");
 
-let selectedCam = 0;
-let cameras : any;
+
 let remainingTime = false;
 let FPSrIC : number;
 let FPS : number;
 
+const scenes = [
+    "bicycle",
+    "bonsai",
+    "counter",
+    // "drjhonson",
+    // "flowers",
+    // "garden",
+    // "kitchen",
+    // "playroom",
+    // "room",
+    // "stump",
+    // "train",
+    // "treehill",
+    // "truck"
+];
+
+function togglePannelDisplay() : void {
+    panelElem?.classList.toggle("slide");
+    // console.log(panelElem);
+
+    hidePannelBtn?.classList.toggle("fa-greater-than");
+    hidePannelBtn?.classList.toggle("fa-less-than");
+    
+    hidePannelBtnWrap?.classList.toggle("slide");
+}
+
+
+function buildCards() : void {
+    const wrapperElem = document.createElement("div");
+    wrapperElem.id = "card_wrapper";
+
+    for(const scene of scenes) {
+        const iconName = scene + ".png";
+        const idNameQuantized = "quantized_"+scene;
+        const idNameBaseline = "baseline_"+scene;
+            
+        {
+            const iconImageWrapElem = document.createElement(`div`);
+            iconImageWrapElem.classList.add("image");
+
+            const imageElem = document.createElement("img");
+            imageElem.src = `https://repo-sam.inria.fr/fungraph/reduced_3dgs/icons/${iconName}`;
+            iconImageWrapElem.appendChild(imageElem);
+
+            const cardElem = document.createElement("div");
+            cardElem.classList.add("scene_card");
+            cardElem.id = `${idNameQuantized}`;
+
+            const iconWrapElem = document.createElement(`div`);
+            iconWrapElem.classList.add("minia_wrap");
+            
+    
+            const labelElem = document.createElement(`label`);
+            labelElem.classList.add("desc");
+            labelElem.textContent = `${scene} light`;
+            
+            iconWrapElem.appendChild(iconImageWrapElem);
+            iconWrapElem.appendChild(labelElem);
+    
+            cardElem.appendChild(iconWrapElem);
+            wrapperElem.appendChild(cardElem);
+        }
+
+        {
+            const iconImageWrapElem = document.createElement(`div`);
+            iconImageWrapElem.classList.add("image");
+
+            const imageElem = document.createElement("img");
+            imageElem.src = `https://repo-sam.inria.fr/fungraph/reduced_3dgs/icons/${iconName}`;
+            iconImageWrapElem.appendChild(imageElem);
+
+            const cardElem = document.createElement("div");
+            cardElem.classList.add("scene_card");
+            cardElem.id = `${idNameBaseline}`;
+
+            const iconWrapElem = document.createElement(`div`);
+            iconWrapElem.classList.add("minia_wrap");
+            
+    
+            const labelElem = document.createElement(`label`);
+            labelElem.classList.add("desc");
+
+            labelElem.textContent = `${scene} heavy`;
+            
+            iconWrapElem.appendChild(iconImageWrapElem);
+            iconWrapElem.appendChild(labelElem);
+    
+            cardElem.appendChild(iconWrapElem);
+            wrapperElem.appendChild(cardElem);
+        }
+    }
+    panelElem?.insertBefore(wrapperElem, hidePannelBtnWrap);
+}
+
+function enableCards() : void {
+    const cardElems = document.querySelectorAll(".scene_card");
+
+    cardElems.forEach((cardElem) => {
+        cardElem.addEventListener("click", () => {
+
+            togglePannelDisplay();
+
+            const sceneName = cardElem.id.split("_")[1];
+            console.log("look for folder "+ sceneName);
+            let url;
+            
+            if(cardElem.id.split("_")[0] === "quantized") {
+                url = `https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/${sceneName}/quantized_${sceneName}.ply`;
+                console.log("URL quantized: " + url);
+                loadFromUrl(url).then(endProgress);
+            } else {
+                url = `https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/${sceneName}/baseline_${sceneName}.ply`;
+                console.log("URL baseline: " + url);
+                loadFromUrl(url, false).then(endProgress);
+            }
+
+
+        });
+    });
+}
+
 const useShs = true; // use shs to compute color or not
+
+
 
 function updateProgress(progress : number, loadingDone: boolean = false) : void {
     (progressElem as HTMLProgressElement).value = 100 * progress;
@@ -48,23 +157,23 @@ function endProgress() : void {
     (loadingDesc as HTMLElement).textContent = "Loading";
 }
 
-async function loadFromFile(file : File) : Promise<void> {
+// async function loadFromFile(file : File) : Promise<void> {
 
-    (loadingElem as HTMLElement).style.opacity = "1";
-    (canvasElem as HTMLElement).style.opacity = "0.1";
+//     (loadingElem as HTMLElement).style.opacity = "1";
+//     (canvasElem as HTMLElement).style.opacity = "0.1";
     
-    if(file.name.endsWith(".ply")) {
-        console.log(".ply file loading from file");
-        return await SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress, undefined, useShs);
+//     if(file.name.endsWith(".ply")) {
+//         console.log(".ply file loading from file");
+//         return await SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress, undefined, useShs);
         
-    } else if(file.name.endsWith(".splat")) {
-        console.log(".splat file loaded from file");
-        return await SPLAT.Loader.LoadFromFileAsync(file, scene, updateProgress);
+//     } else if(file.name.endsWith(".splat")) {
+//         console.log(".splat file loaded from file");
+//         return await SPLAT.Loader.LoadFromFileAsync(file, scene, updateProgress);
         
-    } else {
-        console.log("input file is neither has .ply or .splat extension.");   
-    }
-}
+//     } else {
+//         console.log("input file is neither has .ply or .splat extension.");   
+//     }
+// }
 
 async function loadFromUrl(url : string, quantized : boolean = true) : Promise<void> {
     (loadingElem as HTMLElement).style.opacity = "1";
@@ -94,137 +203,15 @@ function fpsComputeRic(d : IdleDeadline) {
 
 
 async function main() {
-    // const base_file_url = "https://huggingface.co/datasets/dylanebert/3dgs/resolve/main/bonsai/point_cloud/iteration_7000/point_cloud.ply";
-    // await SPLAT.PLYLoader.LoadAsync(base_file_url, scene, updateProgress)
-    // .then(() => {(loadingElem as HTMLElement).style.opacity = "0";} );
-
-    submitUrlElem?.addEventListener("click", () => {
-        const url = (inputUrlElem as HTMLInputElement)?.value as string;
-        loadFromUrl(url).then(endProgress);
-        (inputUrlElem as HTMLInputElement).value = "";
-    }, false);
-
-    inputFileElem?.addEventListener("change", (event : Event) => {
-        const input = event.target as HTMLInputElement;
-        if(input.files && input.files.length) {
-            const file = input.files[0];
-            loadFromFile(file).then(endProgress);
-        }
-    }, false);
-
-
-    camFileElem?.addEventListener("change", (event : Event) => {
-        const input = event.target as HTMLInputElement;
-        if(input.files && input.files.length) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                cameras = JSON.parse(e.target!.result as string);
-
-                camera = SPLAT.Camera.fromData(cameras[selectedCam]);
-                controls.setCamera(camera);
-            };
-            reader.onprogress = () => {
-            };
-            reader.readAsText(file);
-            new Promise<void>((resolve) => {
-                reader.onloadend = () => {
-                    resolve();
-                };
-            });
-            
-            (camSelectorLabelElem as HTMLInputElement).value = "0";
-        }
-    });
-
-    exportBtnElem?.addEventListener("click", () => {
-        console.log("export clicked");
-        camera.dumpSettings(renderer.domElement.width, renderer.domElement.height);
-    });
-    
-    camSelectorBtnElem?.addEventListener("click", () => {
-        console.log("next cam clicked");
-        const nbCam = cameras.length;
-        selectedCam = (selectedCam + 1) % nbCam;
-        
-        camera = SPLAT.Camera.fromData(cameras[selectedCam]);
-        controls.setCamera(camera);
-
-        (camSelectorLabelElem as HTMLInputElement).value = selectedCam.toString();
-    });
-    
-    camSelectorLabelElem?.addEventListener("input", (event: Event) => {
-        const val : number = parseInt((event.target  as HTMLInputElement).value);
-        
-        if (val < cameras.length) {
-            selectedCam = val;
-            camera = SPLAT.Camera.fromData(cameras[selectedCam]);
-            controls.setCamera(camera);        
-        }
-    });
 
     hidePannelBtn?.addEventListener("click", () => {
-        panelElem?.classList.toggle("slide");
-        console.log(panelElem);
-        console.log("toggle button clicked");
-
-        hidePannelBtn?.classList.toggle("fa-greater-than");
-        hidePannelBtn?.classList.toggle("fa-less-than");
-        
+        togglePannelDisplay();
     });
 
 
-    bicycleSceneLight?.addEventListener("click", () => {
-        panelElem?.classList.toggle("slide");
-        console.log(panelElem);
-        console.log("toggle button clicked");
+    buildCards();
+    enableCards();
 
-        hidePannelBtn?.classList.toggle("fa-greater-than");
-        hidePannelBtn?.classList.toggle("fa-less-than");
-        
-        // const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
-        // const url = "https://raw.githack.com/Lanv1/3dgs_scenes/main/scenes/bicycle/quantized_bicycle.ply";
-        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bicycle/quantized_bicycle.ply";
-        loadFromUrl(url).then(endProgress);
-    });
-
-    bicycleSceneHeavy?.addEventListener("click", () => {
-        panelElem?.classList.toggle("slide");
-        console.log(panelElem);
-        console.log("toggle button clicked");
-
-        hidePannelBtn?.classList.toggle("fa-greater-than");
-        hidePannelBtn?.classList.toggle("fa-less-than");
-
-        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bicycle/full_bicycle.ply";
-        loadFromUrl(url, false).then(endProgress);
-    });
-
-    bonsaiSceneLight?.addEventListener("click", () => {
-        panelElem?.classList.toggle("slide");
-        console.log(panelElem);
-        console.log("toggle button clicked");
-
-        hidePannelBtn?.classList.toggle("fa-greater-than");
-        hidePannelBtn?.classList.toggle("fa-less-than");
-        
-        // const url = "https://github.com/Lanv1/3dgs_scenes/blob/main/scenes/bicycle/quantized_bicycle.ply";
-        // const url = "https://raw.githack.com/Lanv1/3dgs_scenes/main/scenes/bicycle/quantized_bicycle.ply";
-        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bonsai/quantized_bonsai.ply";
-        loadFromUrl(url).then(endProgress);
-    });
-
-    bonsaiSceneHeavy?.addEventListener("click", () => {
-        panelElem?.classList.toggle("slide");
-        console.log(panelElem);
-        console.log("toggle button clicked");
-
-        hidePannelBtn?.classList.toggle("fa-greater-than");
-        hidePannelBtn?.classList.toggle("fa-less-than");
-
-        const url = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/scenes/bonsai/full_bonsai.ply";
-        loadFromUrl(url, false).then(endProgress);
-    });
 
     let then = 0;
     let nbFrames = 0;
