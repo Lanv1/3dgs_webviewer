@@ -27,13 +27,13 @@ const scenes = [
     // "drjhonson",
     // "flowers",
     // "garden",
-    // "kitchen",
+    "kitchen",
     // "playroom",
     // "room",
     // "stump",
     // "train",
     // "treehill",
-    // "truck"
+    "truck"
 ];
 
 function togglePannelDisplay() : void {
@@ -156,24 +156,6 @@ function endProgress() : void {
     (canvasElem as HTMLElement).style.opacity = "1";
     (loadingDesc as HTMLElement).textContent = "Loading";
 }
-
-// async function loadFromFile(file : File) : Promise<void> {
-
-//     (loadingElem as HTMLElement).style.opacity = "1";
-//     (canvasElem as HTMLElement).style.opacity = "0.1";
-    
-//     if(file.name.endsWith(".ply")) {
-//         console.log(".ply file loading from file");
-//         return await SPLAT.PLYLoader.LoadFromFileAsync(file, scene, updateProgress, undefined, useShs);
-        
-//     } else if(file.name.endsWith(".splat")) {
-//         console.log(".splat file loaded from file");
-//         return await SPLAT.Loader.LoadFromFileAsync(file, scene, updateProgress);
-        
-//     } else {
-//         console.log("input file is neither has .ply or .splat extension.");   
-//     }
-// }
 
 async function loadFromUrl(url : string, quantized : boolean = true) : Promise<void> {
     (loadingElem as HTMLElement).style.opacity = "1";

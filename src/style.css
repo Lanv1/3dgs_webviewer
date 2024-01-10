@@ -127,6 +127,20 @@ i{
     margin-left: 100%;
     margin-right: 0;
   }
+
+
+  .loading_bar {
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+  
+    left: 30%;
+    top: 50%;
+    z-index: 1;
+  
+    opacity: 0;
+  }
+
 }
 
 /* portrait screen/ tablet */
@@ -155,6 +169,18 @@ i{
     background-color: rgb(62, 85, 85, 0.884);
     padding: 15px;
   }
+
+  .loading_bar {
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+  
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+  
+    opacity: 0;
+  }
 }
 
 /* desktop */
@@ -179,6 +205,18 @@ i{
     color: red;
     background-color: rgb(62, 85, 85, 0.884);
     padding: 15px;
+  }
+
+  .loading_bar {
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+  
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+  
+    opacity: 0;
   }
 }
 
@@ -257,16 +295,7 @@ input#selectedCam{
   width: 40px;
 }
 
-.loading_bar {
-  display: flex;
-  position: fixed;
-  flex-direction: column;
 
-  left: 50%;
-  z-index: 1;
-
-  opacity: 0;
-}
 
 label.desc {
   color: #ffffff;
