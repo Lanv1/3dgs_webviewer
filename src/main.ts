@@ -121,6 +121,8 @@ function enableCards() : void {
         cardElem.addEventListener("click", () => {
 
             togglePannelDisplay();
+            const topOffset = (cardElem as HTMLElement).offsetTop;
+            window.scroll(topOffset, 0);
 
             const sceneName = cardElem.id.split("_")[1];
             console.log("look for folder "+ sceneName);
