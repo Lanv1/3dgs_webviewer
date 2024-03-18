@@ -15,6 +15,19 @@ let loadingDesc = document.getElementById("loading_desc");
 let infoElem = document.getElementById("info_tab");
 let canvasElem = document.querySelector("canvas");
 
+const parseElem = document.createElement('img');
+parseElem.src = "https://repo-sam.inria.fr/fungraph/reduced_3dgs/icons/spinner.png"
+parseElem.classList.add("spinner");
+parseElem.classList.add("rotate-icon");
+
+// (loadingElem as HTMLElement).style.opacity = "1";
+// (canvasElem as HTMLElement).style.opacity = "0.1";
+// loadingElem?.removeChild(progressElem as HTMLProgressElement);
+// loadingElem?.appendChild(parseElem);
+
+let barDesc = 'Loading'
+let barProgress = 0
+let isParsing = false;
 
 let remainingTime = false;
 let FPSrIC : number;
@@ -35,6 +48,20 @@ const scenes = [
     // "treehill",
     "truck"
 ];
+
+
+
+function updateBar() {
+    
+    (loadingDesc as HTMLElement).textContent = `${barDesc} ${barProgress.toFixed(2)}`;
+    if(barDesc == "Parsing" && !isParsing) {
+        loadingElem?.removeChild(progressElem as HTMLProgressElement);
+        loadingElem?.appendChild(parseElem);
+        isParsing = true;
+    } else {
+        (progressElem as HTMLProgressElement).value = 100 * barProgress;
+    }
+}
 
 function togglePannelDisplay() : void {
     panelElem?.classList.toggle("slide");
@@ -145,23 +172,60 @@ function enableCards() : void {
 
 const useShs = true; // use shs to compute color or not
 
+let loading: boolean = false;
 
+async function loadFile(file: File) {
+    if (loading) return;
+    loading = true;
+    // Check if .splat file
+
+    (loadingElem as HTMLElement).style.opacity = "1";
+    (canvasElem as HTMLElement).style.opacity = "0.1";
+    const format = "";
+    // const format = "polycam"; // Uncomment to load a Polycam PLY file
+    await SPLAT.PLYLoader.LoadFromFileAsync(
+        file,
+        scene,
+        updateProgress,
+        format,
+        useShs,
+        false    // flag to use quantized parser or not
+    ).then(endProgress);
+}
+
+
+document.addEventListener("drop", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.dataTransfer != null) {
+        loadFile(e.dataTransfer.files[0]);
+    }
+});
 
 function updateProgress(progress : number, loadingDone: boolean = false) : void {
-    (progressElem as HTMLProgressElement).value = 100 * progress;
-    if(loadingDone)
-        (loadingDesc as HTMLElement).textContent = "Parsing";
+    barProgress = progress;
+    if(loadingDone) {
+        barDesc = "Parsing";
+    }
 }
 
 function endProgress() : void {
     (loadingElem as HTMLElement).style.opacity = "0";
     (canvasElem as HTMLElement).style.opacity = "1";
-    (loadingDesc as HTMLElement).textContent = "Loading";
+    barDesc = "Loading";
+    loading = false;
+    isParsing = false;
+    loadingElem?.appendChild(progressElem as HTMLProgressElement);
+    loadingElem?.removeChild(parseElem);
 }
 
 async function loadFromUrl(url : string, quantized : boolean = true) : Promise<void> {
     (loadingElem as HTMLElement).style.opacity = "1";
     (canvasElem as HTMLElement).style.opacity = "0.1";
+
+    if (loading) return;
+    loading = true;
 
     if(url.endsWith(".ply")) {
         console.log(".ply file loaded from url");
@@ -207,6 +271,9 @@ async function main() {
         let before_draw = performance.now();
         renderer.render(scene, camera);
         let after_draw = performance.now();
+
+        if(loading)
+            updateBar();
         
         avgTime += (after_draw - before_draw);
 

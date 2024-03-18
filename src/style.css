@@ -36,6 +36,15 @@ h1 {
   top: 0%;
 }
 
+.spinner{
+  width: 50px; 
+  padding:0.5em; 
+}
+
+#loading_desc{
+  font-weight: 500;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -107,13 +116,15 @@ i{
   .info_tab {
     display: flex;
     position: fixed;
+    /* font-size: medium; */
+    font: bold 18px/1 sans-serif;
     top: 10%;
-    left: 70%;
-
     z-index: 1;
-    color: red;
-    background-color: rgb(62, 85, 85, 0.884);
+    left: 70%;
+    color: white;
+    background-color: rgb(30 48 80);
     padding: 15px;
+    box-shadow: 2px 3px 8px 0px black;
   }
   
   .icon_wrap{
@@ -133,7 +144,8 @@ i{
     display: flex;
     position: fixed;
     flex-direction: column;
-  
+    align-items: center;
+
     left: 30%;
     top: 50%;
     z-index: 1;
@@ -161,20 +173,23 @@ i{
   .info_tab {
     display: flex;
     position: fixed;
+    /* font-size: medium; */
+    font: bold 18px/1 sans-serif;
+    top: 10%;
     z-index: 1;
     left: 80%;
-
-    top: 10%;
-    color: red;
-    background-color: rgb(62, 85, 85, 0.884);
+    color: white;
+    background-color: rgb(30 48 80);
     padding: 15px;
+    box-shadow: 2px 3px 8px 0px black;
   }
 
   .loading_bar {
     display: flex;
     position: fixed;
     flex-direction: column;
-  
+    align-items: center;
+
     left: 50%;
     top: 50%;
     z-index: 1;
@@ -198,20 +213,25 @@ i{
   .info_tab {
     display: flex;
     position: fixed;
+    /* font-size: medium; */
+    font: bold 18px/1 sans-serif;
     top: 10%;
     z-index: 1;
     left: 90%;
-
-    color: red;
-    background-color: rgb(62, 85, 85, 0.884);
+    color: white;
+    background-color: rgb(30 48 80);
     padding: 15px;
+    box-shadow: 2px 3px 8px 0px black;
   }
+
+
 
   .loading_bar {
     display: flex;
     position: fixed;
     flex-direction: column;
-  
+    align-items: center;
+
     left: 50%;
     top: 50%;
     z-index: 1;
@@ -229,7 +249,7 @@ i{
 }
 .minia_wrap {
   display: block;
-  padding: 0 0.2em 0.5em 0.2em;
+  padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
 .image {
@@ -299,6 +319,7 @@ input#selectedCam{
 
 label.desc {
   color: #ffffff;
+  font-weight: 500;
 }
 
 /* .info_tab {
@@ -316,3 +337,17 @@ canvas {
   position: fixed;
 }
 
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-icon {
+  display: inline-block;
+  /* font-size: 2em; */
+  animation: rotate 2s linear infinite; /* Adjust duration and timing function as needed */
+}
